@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,16 +27,19 @@ class SensorControllerTest {
 
     @Test
     void testRegisterSensor() {
+        // Arrange
         SensorDTO sensorDTO = new SensorDTO();
         sensorDTO.setName("Temperature Sensor");
 
         doNothing().when(sensorService).registerSensor(sensorDTO);
 
+        // Act
         ResponseEntity<String> response = sensorController.registerSensor(sensorDTO);
 
-        assertEquals(200, response.getStatusCodeValue());
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Sensor registered successfully.", response.getBody());
 
-        verify(sensorService, times(1)).registerSensor(sensorDTO);
+        verify(sensorService).registerSensor(sensorDTO);
     }
 }
