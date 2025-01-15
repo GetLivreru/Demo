@@ -12,8 +12,8 @@ import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-
-class SensorControllerTest {
+ 
+public class SensorControllerTest {
 
     @Mock
     private SensorService sensorService;
