@@ -1,30 +1,83 @@
-REST API Service for Receiving Sensor Data
+# Sensor Data REST API Service
 
-This project is a REST API service built using Spring Boot, designed to receive data from a sensor. The service provides functionality for sensor registration, data submission, and retrieval of weather-related measurements.
+## Project Description
+This Spring Boot application provides a REST API service for collecting and managing sensor data. The service allows sensors to register, submit measurements (temperature and rainfall data), and retrieve historical measurements. The API is secured using JWT authentication.
 
-Features
+## Features
+- Sensor registration with duplicate name validation
+- Measurement data collection with temperature and rainfall information
+- Retrieval of all measurements
+- Rainy days count calculation
+- JWT-based authentication
+- Swagger API documentation
+- Docker containerization
+- Automated test suite
 
-1.Sensor Registration:
+## Technology Stack
+- Java 17
+- Spring Boot 3.x
+- Spring Security
+- Spring Data JPA
+- PostgreSQL
+- Docker & Docker Compose
+- JUnit 5 & Mockito
+- Swagger/OpenAPI 3.0
 
-Endpoint: POST /sensors/registration
+## Getting Started
 
-Registers a new sensor with a unique name.
+### Prerequisites
+- Docker and Docker Compose installed
+- Java 17 or later (for local development)
+- Maven (for local development)
 
-Validates if the sensor name already exists and returns an error if it does.
+### Running with Docker
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/sensor-api.git
+cd sensor-api
+```
 
-Example JSON request:
+2. Start the application using Docker Compose:
+```bash
+docker-compose up -d
+```
+
+The application will be available at `http://localhost:8080`
+
+### Local Development Setup
+1. Configure PostgreSQL database settings in `application.properties`
+2. Build the project:
+```bash
+mvn clean install
+```
+
+3. Run the application:
+```bash
+mvn spring-boot:run
+```
+
+## API Endpoints
+
+### Authentication
+All endpoints except registration require a valid JWT token in the Authorization header:
+```
+Authorization: Bearer <your_jwt_token>
+```
+
+### Sensor Registration
+```
+POST /sensors/registration
+Content-Type: application/json
+
 {
     "name": "sensorName"
 }
-2.Add Measurement:
+```
 
-Endpoint: POST /measurements/add
-
-Receives temperature and weather condition measurements from a sensor.
-
-Validates the request data before saving.
-
-Example JSON request:
+### Add Measurement
+```
+POST /measurements/add
+Content-Type: application/json
 
 {
     "value": 23.5,
@@ -33,66 +86,81 @@ Example JSON request:
         "name": "sensorName"
     }
 }
+```
 
-3.Retrieve Measurements:
+### Get All Measurements
+```
+GET /measurements
+```
 
-Endpoint: GET /measurements
+### Get Rainy Days Count
+```
+GET /measurements/rainyDaysCount
+```
 
-Returns all recorded measurements.
+## API Documentation
+Swagger documentation is available at `http://localhost:8080/swagger-ui.html` when the application is running.
 
-4.Count Rainy Days:
+## Testing
+The project includes a comprehensive test suite covering all major functionality:
 
-Endpoint: GET /measurements/rainyDaysCount
+### Running Tests
+```bash
+mvn test
+```
 
-Returns the total number of days with rainfall recorded.
+### Test Coverage
+- Controller layer tests
+- Service layer tests
+- Repository layer tests
+- Integration tests
+- Security tests
 
-5.JWT Authorization:
+## Client Application
+A Java client application is included for testing the API. It performs:
+1. Sensor registration
+2. Sending 1000 random measurements
+3. Retrieving all measurements
 
-Secures endpoints with JWT-based authentication.
+### Running the Client
+```bash
+java -jar sensor-client.jar
+```
 
-6.Client Application:
+## Project Structure
+```
+src/
+├── main/
+│   ├── java/
+│   │   └── com/sensor/
+│   │       ├── controllers/
+│   │       ├── services/
+│   │       ├── repositories/
+│   │       ├── models/
+│   │       ├── dto/
+│   │       └── security/
+│   └── resources/
+│       └── application.properties
+├── test/
+│   └── java/
+└── docker/
+    ├── Dockerfile
+    └── docker-compose.yml
+```
 
-A Java client to interact with the API, perform sensor registration, send measurements, and retrieve data.
+## Security Considerations
+- JWT-based authentication
+- Input validation
+- Rate limiting
+- CORS configuration
+- Security headers
 
-Setup Instructions
+## Contributing
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
-1. Build the Application
-
-Run the following commands to build the application and generate the JAR file:
-mvn clean package
-2. Docker Setup 
-Dockerfile
-
-The Dockerfile is already configured to build the Spring Boot application into a container:
-FROM openjdk:21-jdk-slim
-WORKDIR /app
-COPY target/demo-0.0.1-SNAPSHOT.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
-docker-compose.yml
-version: '3.9'
-
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/your_database_name
-      - SPRING_DATASOURCE_USERNAME=your_db_user
-      - SPRING_DATASOURCE_PASSWORD=your_db_password
-    depends_on:
-      - db
-
-  db:
-    image: mysql:8.0
-    container_name: mysql-container
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: your_database_name
-      MYSQL_USER: your_db_user
-      MYSQL_PASSWORD: your_db_password
+## License
+This project is licensed under the MIT License - see the LICENSE.md file for details.
